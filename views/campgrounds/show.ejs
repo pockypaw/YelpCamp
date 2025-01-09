@@ -1,0 +1,51 @@
+<% layout('layouts/boilerplate')%>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Card for Campground details -->
+      <div class="card border-0 shadow-lg">
+        <!-- Image Section -->
+        <div class="d-flex justify-content-center">
+          <img 
+            src="<%= campground.image %>" 
+            class="card-img-top rounded-top" 
+            alt="<%= campground.title %>" 
+            style="width: 100%; height: 354px; object-fit: cover; border-radius: 0.25rem;"
+          />
+        </div>
+        
+        <!-- Card Body Section -->
+        <div class="card-body">
+          <!-- Title and Location -->
+          <h1 class="card-title text-center fw-bold text-dark"><%= campground.title %></h1>
+          <h4 class="text-center text-muted"><i class="bi bi-geo-alt-fill"></i> <%= campground.location %></h4>
+          <h5 class="text-center text-success mt-3">$<%= campground.price %>.00</h5>
+
+          <!-- Description Section -->
+          <hr />
+          <p class="card-text mt-4 text-justify"><%= campground.description %></p>
+
+          <!-- Action Buttons -->
+          <div class="d-flex justify-content-between mt-5">
+            <a href="/campground/<%=campground._id%>/edit" class="btn btn-outline-warning btn-lg">
+              <i class="bi bi-pencil-square"></i> Edit
+            </a>
+            <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="post">
+              <button type="submit" class="btn btn-outline-danger btn-lg">
+                <i class="bi bi-trash-fill"></i> Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to Campgrounds Button -->
+      <div class="mt-4 text-center">
+        <a href="/campgrounds" class="btn btn-secondary btn-lg">
+          <i class="bi bi-arrow-left"></i> Back to Campgrounds
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

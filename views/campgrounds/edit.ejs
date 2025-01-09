@@ -1,0 +1,87 @@
+<% layout('layouts/boilerplate')%>
+
+<h1 class="text-center">Edit Campground</h1>
+<div class="col-6 offset-3">
+  <form action="/campgrounds/<%=campground._id%>?_method=PUT" method="post" novalidate class="form-validation"">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        name="campground[title]"
+        value="<%=campground.title%>"
+        required
+      />
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="location" class="form-label">Location</label>
+      <input
+        type="text"
+        class="form-control"
+        id="location"
+        name="campground[location]"
+        value="<%=campground.location%>"
+        required
+      />  <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Image URL</label>
+      <input
+        type="text"
+        class="form-control"
+        id="image"
+        name="campground[image]"
+        value="<%=campground.image%>"
+        required
+      />  <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="price" class="form-label">Price</label>
+      <div class="input-group mb-3">
+        <span class="input-group-text">$</span>
+        <input
+          type="text"
+          class="form-control"
+          id="price"
+          name="campground[price]"
+          aria-label="Amount (to the nearest dollar)"
+          value="<%=campground.price%>"
+          required
+        />
+        <span class="input-group-text">.00</span>
+      </div>
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        id="description"
+        name="campground[description]"
+        rows="4"
+        required
+      ><%=campground.description%></textarea>
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary">Update Campground</button>
+    </div>
+  </form>
+</div>
