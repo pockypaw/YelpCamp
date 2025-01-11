@@ -1,4 +1,34 @@
-<% layout('layouts/boilerplate')%>
+<% layout('layouts/boilerplate') %>
+
+<style>
+  /* Mengatur arah bintang dari kanan ke kiri */
+  .star-rating {
+    direction: rtl;
+    gap: 0.5rem;
+  }
+
+  /* Sembunyikan radio buttons */
+  .star-rating input[type="radio"] {
+    display: none;
+  }
+
+  /* Style awal untuk bintang (abu-abu) */
+  .star-rating label {
+    color: #ccc;
+    cursor: pointer;
+  }
+
+  /* Ubah warna saat di-hover */
+  .star-rating label:hover,
+  .star-rating label:hover ~ label {
+    color: #ffc107;
+  }
+
+  /* Ubah warna bintang saat dipilih (klik) */
+  .star-rating input[type="radio"]:checked ~ label {
+    color: #ffc107;
+  }
+</style>
 
 <div class="container mt-5">
   <div class="row justify-content-center">
@@ -7,31 +37,50 @@
       <div class="card border-0 shadow-lg">
         <!-- Image Section -->
         <div class="d-flex justify-content-center">
-          <img 
-            src="<%= campground.image %>" 
-            class="card-img-top rounded-top" 
-            alt="<%= campground.title %>" 
-            style="width: 100%; height: 354px; object-fit: cover; border-radius: 0.25rem;"
+          <img
+            src="<%= campground.image %>"
+            class="card-img-top rounded-top"
+            alt="<%= campground.title %>"
+            style="
+              width: 100%;
+              height: 354px;
+              object-fit: cover;
+              border-radius: 0.25rem;
+            "
           />
         </div>
-        
+
         <!-- Card Body Section -->
         <div class="card-body">
           <!-- Title and Location -->
-          <h1 class="card-title text-center fw-bold text-dark"><%= campground.title %></h1>
-          <h4 class="text-center text-muted"><i class="bi bi-geo-alt-fill"></i> <%= campground.location %></h4>
-          <h5 class="text-center text-success mt-3">$<%= campground.price %>.00</h5>
+          <h1 class="card-title text-center fw-bold text-dark">
+            <%= campground.title %>
+          </h1>
+          <h4 class="text-center text-muted">
+            <i class="bi bi-geo-alt-fill"></i> <%= campground.location %>
+          </h4>
+          <h5 class="text-center text-success mt-3">
+            $<%= campground.price %>.00
+          </h5>
 
           <!-- Description Section -->
           <hr />
-          <p class="card-text mt-4 text-justify"><%= campground.description %></p>
+          <p class="card-text mt-4 text-justify">
+            <%= campground.description %>
+          </p>
 
           <!-- Action Buttons -->
           <div class="d-flex justify-content-between mt-5">
-            <a href="/campground/<%=campground._id%>/edit" class="btn btn-outline-warning btn-lg">
+            <a
+              href="/campground/<%= campground._id %>/edit"
+              class="btn btn-outline-warning btn-lg"
+            >
               <i class="bi bi-pencil-square"></i> Edit
             </a>
-            <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="post">
+            <form
+              action="/campgrounds/<%= campground._id %>?_method=DELETE"
+              method="post"
+            >
               <button type="submit" class="btn btn-outline-danger btn-lg">
                 <i class="bi bi-trash-fill"></i> Delete
               </button>
@@ -41,10 +90,77 @@
       </div>
 
       <!-- Back to Campgrounds Button -->
-      <div class="mt-4 text-center">
+      <div class="mt-4 text-center mb-3">
         <a href="/campgrounds" class="btn btn-secondary btn-lg">
           <i class="bi bi-arrow-left"></i> Back to Campgrounds
         </a>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="mt-5">
+        <h2 class="mb-4">Reviews</h2>
+        <% if (campground.reviews.length === 0) { %>
+        <p class="text-muted">
+          No reviews yet. Be the first to leave a review!
+        </p>
+        <% } else { %> <% campground.reviews.map(review => { %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <!-- Display rating with stars -->
+            <h5 class="card-title">
+              <% for (let i = 0; i < review.rating; i++) { %>
+              <i class="bi bi-star-fill text-warning"></i>
+              <% } %> <% for (let i = review.rating; i < 5; i++) { %>
+              <i class="bi bi-star text-muted"></i>
+              <% } %>
+              <span class="ms-2"><%= review.rating %>/5</span>
+            </h5>
+            <p class="card-text"><%= review.body %></p>
+            <p class="text-muted">— <%= review.author %></p>
+          </div>
+        </div>
+        <% }) %> <% } %>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="mt-5">
+        <h2 class="mb-4">Leave a Comment</h2>
+        <form
+          action="/campgrounds/<%= campground._id %>/reviews"
+          method="post"
+          class="my-3 form-validation"
+          novalidate
+        >
+          <!-- Star Rating Section -->
+          <div class="mb-3">
+            <label class="form-label d-block mb-2">Rating</label>
+            <div class="star-rating d-flex">
+              <% for (let i = 5; i >= 1; i--) { %>
+              <input
+                type="radio"
+                id="star-<%= i %>"
+                name="review[rating]"
+                value="<%= i %>"
+                required
+              />
+              <label for="star-<%= i %>" class="bi bi-star-fill fs-2"></label>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Review Body Section -->
+          <div class="mb-3">
+            <label for="body" class="form-label">Review</label>
+            <textarea
+              name="review[body]"
+              id="body"
+              class="form-control"
+              required
+            ></textarea>
+          </div>
+
+          <button class="btn btn-primary">Submit</button>
+        </form>
       </div>
     </div>
   </div>
