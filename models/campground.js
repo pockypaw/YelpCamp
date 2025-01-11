@@ -26,6 +26,12 @@ const CampgroundSchema = new Schema({
     required: [true, "Image URL is required"],
     match: [/^https?:\/\/[^\s]+$/, "Image URL must be a valid URL"],
   },
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
 });
 
 // Create a model based on the schema

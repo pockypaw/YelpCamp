@@ -6,11 +6,12 @@ const Campground = require("./models/campground");
 const methodOverride = require("method-override");
 const morgan = require("morgan");
 const ejsMate = require("ejs-mate");
-const AppError = require("./handler/AppError");
-const { globalErrorHandler } = require("./handler/errorHandlers");
-const wrapAsync = require("./handler/wrapAsync");
+const AppError = require("./utils/AppError");
+const { globalErrorHandler } = require("./utils/errorHandlers");
+const wrapAsync = require("./utils/wrapAsync");
 require("dotenv").config();
-const campgroundSchema = require("./schema"); // Import the schema
+const { campgroundSchema, reviewSchema } = require("./schema"); // Import the schema
+const Review = require("./models/review");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
   useNewUrlParser: true,
@@ -35,6 +36,14 @@ app.set("views", path.join(__dirname, "views"));
 // Joi validation middleware
 const campgroundValidation = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(", ");
+    return next(new AppError(msg, 400));
+  }
+  next(); // If validation passes, move to next middleware
+};
+const reviewValidation = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
   if (error) {
     const msg = error.details.map((el) => el.message).join(", ");
     return next(new AppError(msg, 400));
@@ -98,7 +107,10 @@ app.post(
 app.get(
   "/campgrounds/:id",
   wrapAsync(async (req, res, next) => {
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id).populate(
+      "reviews"
+    );
+    console.log(campground);
     if (!campground) {
       throw new AppError("Campground not found", 404); // Not found
     }
@@ -126,6 +138,20 @@ app.delete(
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect(`/campgrounds`);
+  })
+);
+
+// Reviews
+app.post(
+  "/campgrounds/:id/reviews",
+  reviewValidation,
+  wrapAsync(async (req, res, next) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
   })
 );
 
