@@ -41,7 +41,12 @@
             src="<%= campground.image %>"
             class="card-img-top rounded-top"
             alt="<%= campground.title %>"
-            style="width: 100%; height: 354px; object-fit: cover; border-radius: 0.25rem;"
+            style="
+              width: 100%;
+              height: 354px;
+              object-fit: cover;
+              border-radius: 0.25rem;
+            "
           />
         </div>
 
@@ -57,6 +62,9 @@
           <h5 class="text-center text-success mt-3">
             $<%= campground.price %>.00
           </h5>
+          <h6 class="text-center text-dark fw-bold mt-3">
+            Submitted by : <%= campground.author.username %>
+          </h6>
 
           <!-- Description Section -->
           <hr />
@@ -66,10 +74,16 @@
 
           <!-- Action Buttons -->
           <div class="d-flex justify-content-between mt-5">
-            <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-outline-warning btn-lg">
+            <a
+              href="/campgrounds/<%= campground._id %>/edit"
+              class="btn btn-outline-warning btn-lg"
+            >
               <i class="bi bi-pencil-square"></i> Edit
             </a>
-            <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="post">
+            <form
+              action="/campgrounds/<%= campground._id %>?_method=DELETE"
+              method="post"
+            >
               <button type="submit" class="btn btn-outline-danger btn-lg">
                 <i class="bi bi-trash-fill"></i> Delete
               </button>
@@ -89,45 +103,58 @@
       <div class="mt-5">
         <h2 class="mb-4">Reviews</h2>
         <% if (campground.reviews.length === 0) { %>
-        <p class="text-muted">No reviews yet. Be the first to leave a review!</p>
-        <% } else { %>
-          <% campground.reviews.map(review => { %>
-            <div class="card mb-3">
-              <div class="card-body">
-                <!-- Display rating with stars -->
-                <h5 class="card-title">
-                  <% for (let i = 0; i < review.rating; i++) { %>
-                    <i class="bi bi-star-fill text-warning"></i>
-                  <% } %>
-                  <% for (let i = review.rating; i < 5; i++) { %>
-                    <i class="bi bi-star text-muted"></i>
-                  <% } %>
-                  <span class="ms-2"><%= review.rating %>/5</span>
-                </h5>
-                <p class="card-text"><%= review.body %></p>
-                <p class="text-muted">— <%= review.author %></p>
-                <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE" method="post">
-                  <button type="submit" class="btn btn-outline-danger btn-sm">
-                    <i class="bi bi-trash-fill"></i> Delete Review
-                  </button>
-                </form>
-              </div>
-            </div>
-          <% }) %>
-        <% } %>
+        <p class="text-muted">
+          No reviews yet. Be the first to leave a review!
+        </p>
+        <% } else { %> <% campground.reviews.map(review => { %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <!-- Display rating with stars -->
+            <h5 class="card-title">
+              <% for (let i = 0; i < review.rating; i++) { %>
+              <i class="bi bi-star-fill text-warning"></i>
+              <% } %> <% for (let i = review.rating; i < 5; i++) { %>
+              <i class="bi bi-star text-muted"></i>
+              <% } %>
+              <span class="ms-2"><%= review.rating %>/5</span>
+            </h5>
+            <p class="card-text"><%= review.body %></p>
+            <p class="text-muted">— <%= review.author %></p>
+            <form
+              action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
+              method="post"
+            >
+              <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash-fill"></i> Delete Review
+              </button>
+            </form>
+          </div>
+        </div>
+        <% }) %> <% } %>
       </div>
 
       <!-- Leave a Comment Form -->
       <div class="mt-5">
         <h2>Leave a Comment</h2>
-        <form action="/campgrounds/<%= campground._id %>/reviews" method="post" class="my-3 form-validation" novalidate>
+        <form
+          action="/campgrounds/<%= campground._id %>/reviews"
+          method="post"
+          class="my-3 form-validation"
+          novalidate
+        >
           <!-- Star Rating Section -->
           <div class="mb-3">
             <label class="form-label d-block mb-2">Rating</label>
             <div class="star-rating d-flex">
               <% for (let i = 5; i >= 1; i--) { %>
-                <input type="radio" id="star-<%= i %>" name="review[rating]" value="<%= i %>" required />
-                <label for="star-<%= i %>" class="bi bi-star-fill fs-2"></label>
+              <input
+                type="radio"
+                id="star-<%= i %>"
+                name="review[rating]"
+                value="<%= i %>"
+                required
+              />
+              <label for="star-<%= i %>" class="bi bi-star-fill fs-2"></label>
               <% } %>
             </div>
           </div>
@@ -135,7 +162,12 @@
           <!-- Review Body Section -->
           <div class="mb-3">
             <label for="body" class="form-label">Review</label>
-            <textarea name="review[body]" id="body" class="form-control" required></textarea>
+            <textarea
+              name="review[body]"
+              id="body"
+              class="form-control"
+              required
+            ></textarea>
           </div>
 
           <button class="btn btn-primary">Submit</button>

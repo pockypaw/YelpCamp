@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const CampgroundSchema = new Schema({
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   title: {
     type: String,
     required: [true, "Title is required"],
@@ -16,7 +20,7 @@ const CampgroundSchema = new Schema({
   description: {
     type: String,
     required: [true, "Description is required"],
-    maxlength: [500, "Description cannot exceed 500 characters"],
+    maxlength: [1500, "Description cannot exceed 500 characters"],
   },
   location: {
     type: String,
