@@ -3,6 +3,7 @@ const wrapAsync = require("../utils/wrapAsync");
 const {
   campgroundValidation,
   reviewValidation,
+  isLoggedIn,
 } = require("../middleware/middleware");
 const Campground = require("../models/campground");
 const Review = require("../models/review");
@@ -29,13 +30,14 @@ router.get(
 );
 
 // New route - Show form to create a new campground
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new");
 });
 
 // Edit route - Show form to edit a campground
 router.get(
   "/:id/edit",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     if (!handleCampgroundNotFound(campground, res)) return;
@@ -46,6 +48,7 @@ router.get(
 // Post route - Create a new campground with validation
 router.post(
   "/",
+  isLoggedIn,
   campgroundValidation,
   wrapAsync(async (req, res) => {
     const campground = new Campground(req.body.campground);
@@ -59,7 +62,9 @@ router.post(
 router.get(
   "/:id",
   wrapAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate("reviews");
+    const campground = await Campground.findById(req.params.id).populate(
+      "reviews"
+    );
     if (!handleCampgroundNotFound(campground, res)) return;
     res.render("campgrounds/show", { campground });
   })
@@ -68,10 +73,15 @@ router.get(
 // Update route - Update an existing campground
 router.put(
   "/:id",
+  isLoggedIn,
   campgroundValidation,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, { new: true });
+    const campground = await Campground.findByIdAndUpdate(
+      id,
+      { ...req.body.campground },
+      { new: true }
+    );
     if (!campground) {
       throw new AppError("Campground not found", 404);
     }
@@ -83,6 +93,7 @@ router.put(
 // Delete route - Delete a campground
 router.delete(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndDelete(id);
@@ -97,6 +108,7 @@ router.delete(
 // Reviews - Create a new review
 router.post(
   "/:id/reviews",
+  isLoggedIn,
   reviewValidation,
   wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
@@ -114,6 +126,7 @@ router.post(
 // Reviews - Delete a specific review
 router.delete(
   "/:id/reviews/:reviewId",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id, reviewId } = req.params;
     const campground = await Campground.findByIdAndUpdate(id, {
