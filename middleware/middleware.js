@@ -28,12 +28,19 @@ const verifyPassword = (req, res, next) => {
 };
 
 const isLoggedIn = (req, res, next) => {
-  req.session.returnTo = req.originalUrl;
   if (!req.isAuthenticated()) {
+    req.session.returnTo = req.originalUrl;
     req.flash("error", "You must be signed in first");
     return res.redirect("/login");
   }
 
+  next();
+};
+
+const storeReturnTo = (req, res, next) => {
+  if (req.session.returnTo) {
+    res.locals.returnTo = req.session.returnTo;
+  }
   next();
 };
 
@@ -42,4 +49,5 @@ module.exports = {
   reviewValidation,
   verifyPassword,
   isLoggedIn,
+  storeReturnTo,
 };
