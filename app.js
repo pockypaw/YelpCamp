@@ -60,7 +60,6 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
-  console.log(req.user);
   res.locals.successMessage = req.flash("success");
   res.locals.errorMessage = req.flash("error");
   next();
