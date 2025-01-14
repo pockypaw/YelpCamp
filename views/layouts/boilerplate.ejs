@@ -11,12 +11,13 @@
       crossorigin="anonymous"
     />
     <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-    rel="stylesheet"
-  />
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <script src="/hello.js"></script>
   </head>
   <body class="d-flex flex-column vh-100">
-    <%- include('../partials/navbar')%>
+    <%- include('../partials/navbar')%> <%- include('../partials/flash')%>
     <main class="container mt-5"><%- body %></main>
     <%- include('../partials/footer')%>
     <script

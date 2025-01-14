@@ -1,0 +1,8 @@
+<% if (successMessage.length > 0 || errorMessage.length > 0) { %>
+    <div class="alert <%= successMessage.length > 0 ? 'alert-success' : 'alert-danger' %> alert-dismissible fade show" role="alert">
+      <strong><%= successMessage.length > 0 ? 'Sukses!' : 'Gagal!' %></strong> 
+      <%= successMessage.length > 0 ? successMessage[0] : errorMessage[0] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% } %>
+  
