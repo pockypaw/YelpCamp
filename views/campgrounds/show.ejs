@@ -120,7 +120,9 @@
               <span class="ms-2"><%= review.rating %>/5</span>
             </h5>
             <p class="card-text"><%= review.body %></p>
-            <p class="text-muted">— <%= review.author %></p>
+            <p class="text-muted">— <%= review.author.username %></p>
+            <% if (currentUser && review.author.equals(currentUser._id)) {
+            %>
             <form
               action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
               method="post"
@@ -129,6 +131,7 @@
                 <i class="bi bi-trash-fill"></i> Delete Review
               </button>
             </form>
+            <% } %>
           </div>
         </div>
         <% }) %> <% } %>
@@ -137,6 +140,7 @@
       <!-- Leave a Comment Form -->
       <div class="mt-5">
         <h2>Leave a Comment</h2>
+        <% if (currentUser) { %>
         <form
           action="/campgrounds/<%= campground._id %>/reviews"
           method="post"
@@ -173,6 +177,9 @@
 
           <button class="btn btn-primary">Submit</button>
         </form>
+        <%}else {%>
+        <p class="text-muted">Login for create review</p>
+        <%}%>
       </div>
     </div>
   </div>

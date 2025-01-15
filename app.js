@@ -8,8 +8,9 @@ const ejsMate = require("ejs-mate");
 const AppError = require("./utils/AppError");
 const { globalErrorHandler } = require("./utils/errorHandlers");
 require("dotenv").config();
-const campgroundsRouter = require("./routes/campgrounds");
-const authRouter = require("./routes/auth");
+const campgroundsRouter = require("./routes/campgroundRoutes");
+const reviewRouter = require("./routes/reviewRoutes");
+const authRouter = require("./routes/authRoutes");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -88,6 +89,7 @@ app.get("/fakeuser", isLoggedIn, async (req, res) => {
 });
 app.use("/", authRouter);
 app.use("/campgrounds/", campgroundsRouter);
+app.use("/campgrounds/", reviewRouter);
 
 // Global error handler middleware
 

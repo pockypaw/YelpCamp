@@ -2,6 +2,7 @@ const { campgroundSchema, reviewSchema } = require("../schema");
 const AppError = require("../utils/AppError");
 const wrapAsync = require("../utils/wrapAsync");
 const Campground = require("../models/campground");
+const Review = require("../models/review");
 
 // Joi validation middleware
 const campgroundValidation = (req, res, next) => {
@@ -62,6 +63,19 @@ const isAuthor = wrapAsync(async (req, res, next) => {
   }
   next();
 });
+const isReviewAuthor = wrapAsync(async (req, res, next) => {
+  const { id, reviewId } = req.params;
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    req.flash("error", "Review tidak ditemukan");
+    return res.redirect("/campgrounds");
+  }
+  if (!review.author.equals(req.user._id)) {
+    req.flash("error", "You do not have permission to do that");
+    return res.redirect(`/campgrounds/${id}`);
+  }
+  next();
+});
 
 module.exports = {
   campgroundValidation,
@@ -70,4 +84,5 @@ module.exports = {
   isLoggedIn,
   storeReturnTo,
   isAuthor,
+  isReviewAuthor
 };
