@@ -1,5 +1,8 @@
 const { campgroundSchema, reviewSchema } = require("../schema");
 const AppError = require("../utils/AppError");
+const wrapAsync = require("../utils/wrapAsync");
+const Campground = require("../models/campground");
+
 // Joi validation middleware
 const campgroundValidation = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
@@ -45,10 +48,26 @@ const storeReturnTo = (req, res, next) => {
   next();
 };
 
+// Middleware to check if the logged-in user is the author of the campground
+const isAuthor = wrapAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const campground = await Campground.findById(id);
+  if (!campground) {
+    req.flash("error", "Campground tidak ditemukan");
+    return res.redirect("/campgrounds");
+  }
+  if (!campground.author.equals(req.user._id)) {
+    req.flash("error", "You do not have permission to do that");
+    return res.redirect(`/campgrounds/${id}`);
+  }
+  next();
+});
+
 module.exports = {
   campgroundValidation,
   reviewValidation,
   verifyPassword,
   isLoggedIn,
   storeReturnTo,
+  isAuthor,
 };

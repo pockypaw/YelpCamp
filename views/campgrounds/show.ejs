@@ -71,7 +71,7 @@
           <p class="card-text mt-4 text-justify">
             <%= campground.description %>
           </p>
-          <% if(currentUser && campground.author == currentUser){ %>
+          <% if (currentUser && campground.author.equals(currentUser._id)) { %>
           <!-- Action Buttons -->
           <div class="d-flex justify-content-between mt-5">
             <a

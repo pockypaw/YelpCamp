@@ -4,21 +4,13 @@ const {
   campgroundValidation,
   reviewValidation,
   isLoggedIn,
+  isAuthor,
 } = require("../middleware/middleware");
 const Campground = require("../models/campground");
 const Review = require("../models/review");
-const AppError = require("../utils/AppError");
+
 
 const router = express.Router();
-
-// Helper function to handle errors when campground is not found
-const handleCampgroundNotFound = (campground, res) => {
-  if (!campground) {
-    req.flash("error", "Campground yang anda cari tidak dapat ditemukan!");
-    return res.redirect("/campgrounds");
-  }
-  return true;
-};
 
 // Index route - Show all campgrounds
 router.get(
@@ -38,9 +30,14 @@ router.get("/new", isLoggedIn, (req, res) => {
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isAuthor,
   wrapAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    if (!handleCampgroundNotFound(campground, res)) return;
+    const { id } = req.params;
+    const campground = await Campground.findById(id);
+    if (!campground) {
+      req.flash("error", "Campground tidak ditemukan");
+      return res.redirect("/campgrounds");
+    }
     res.render("campgrounds/edit", { campground });
   })
 );
@@ -55,7 +52,7 @@ router.post(
     campground.author = req.user._id;
     await campground.save();
     req.flash("success", "Campground berhasil ditambahkan!");
-    res.redirect("/campgrounds");
+    res.redirect(`/campgrounds/${campground._id}`);
   })
 );
 
@@ -66,7 +63,10 @@ router.get(
     const campground = await Campground.findById(req.params.id)
       .populate("reviews")
       .populate("author");
-    if (!handleCampgroundNotFound(campground, res)) return;
+    if (!campground) {
+      req.flash("error", "Campground tidak ditemukan");
+      return res.redirect("/campgrounds");
+    }
     res.render("campgrounds/show", { campground });
   })
 );
@@ -75,24 +75,19 @@ router.get(
 router.put(
   "/:id",
   isLoggedIn,
+  isAuthor,
   campgroundValidation,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id);
-    if (!campground) {
-      throw new AppError("Campground not found", 404);
-    }
-    const checkAuthor = campground.author == req.user._id;
-    if (!checkAuthor) {
-      req.flash("error", "You do not have permission");
-      res.redirect(`/campgrounds/${id}`);
-    }
-    const camp = await Campground.findByIdAndUpdate(
+    const campground = await Campground.findByIdAndUpdate(
       id,
       { ...req.body.campground },
       { new: true }
     );
-
+    if (!campground) {
+      req.flash("error", "Campground tidak ditemukan");
+      return res.redirect("/campgrounds");
+    }
     req.flash("success", "Campground berhasil diupdate!");
     res.redirect(`/campgrounds/${id}`);
   })
@@ -102,11 +97,13 @@ router.put(
 router.delete(
   "/:id",
   isLoggedIn,
+  isAuthor,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndDelete(id);
     if (!campground) {
-      throw new AppError("Campground not found", 404);
+      req.flash("error", "Campground tidak ditemukan");
+      return res.redirect("/campgrounds");
     }
     req.flash("success", "Campground berhasil dihapus!");
     res.redirect("/campgrounds");
@@ -120,7 +117,10 @@ router.post(
   reviewValidation,
   wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
-    if (!handleCampgroundNotFound(campground, res)) return;
+    if (!campground) {
+      req.flash("error", "Campground tidak ditemukan");
+      return res.redirect("/campgrounds");
+    }
 
     const review = new Review(req.body.review);
     campground.reviews.push(review);
@@ -140,11 +140,14 @@ router.delete(
     const campground = await Campground.findByIdAndUpdate(id, {
       $pull: { reviews: reviewId },
     });
-    if (!handleCampgroundNotFound(campground, res)) return;
+    if (!campground) {
+      req.flash("error", "Campground tidak ditemukan");
+      return res.redirect("/campgrounds");
+    }
 
     const review = await Review.findByIdAndDelete(reviewId);
     if (!review) {
-      req.flash("error", "Review yang anda cari tidak dapat ditemukan!");
+      req.flash("error", "Review tidak ditemukan");
       return res.redirect(`/campgrounds/${id}`);
     }
 
