@@ -40,7 +40,6 @@ router.post(
   }),
   (req, res) => {
     req.flash("success", "Welcome back!");
-    console.log(req.session.returnTo);
     // Redirect to the stored URL or a default page
     const redirectUrl = res.locals.returnTo || "/campgrounds";
     delete req.session.returnTo; // Clear returnTo after redirecting

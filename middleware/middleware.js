@@ -1,4 +1,5 @@
 const { campgroundSchema, reviewSchema } = require("../schema");
+const AppError = require("../utils/AppError");
 // Joi validation middleware
 const campgroundValidation = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);

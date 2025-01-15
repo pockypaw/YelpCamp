@@ -52,6 +52,7 @@ router.post(
   campgroundValidation,
   wrapAsync(async (req, res) => {
     const campground = new Campground(req.body.campground);
+    campground.author = req.user._id;
     await campground.save();
     req.flash("success", "Campground berhasil ditambahkan!");
     res.redirect("/campgrounds");
@@ -65,7 +66,6 @@ router.get(
     const campground = await Campground.findById(req.params.id)
       .populate("reviews")
       .populate("author");
-    console.log(campground);
     if (!handleCampgroundNotFound(campground, res)) return;
     res.render("campgrounds/show", { campground });
   })
@@ -78,14 +78,21 @@ router.put(
   campgroundValidation,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(
+    const campground = await Campground.findById(id);
+    if (!campground) {
+      throw new AppError("Campground not found", 404);
+    }
+    const checkAuthor = campground.author == req.user._id;
+    if (!checkAuthor) {
+      req.flash("error", "You do not have permission");
+      res.redirect(`/campgrounds/${id}`);
+    }
+    const camp = await Campground.findByIdAndUpdate(
       id,
       { ...req.body.campground },
       { new: true }
     );
-    if (!campground) {
-      throw new AppError("Campground not found", 404);
-    }
+
     req.flash("success", "Campground berhasil diupdate!");
     res.redirect(`/campgrounds/${id}`);
   })

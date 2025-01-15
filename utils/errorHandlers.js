@@ -7,7 +7,6 @@ const AppError = require("./AppError");
 // };
 
 const globalErrorHandler = (err, req, res, next) => {
-  console.log(err.name);
   //We can single out particular types of Mongoose Errors:
 //   if (err.name === "ValidationError") err = handleValidationErr(err);
   next(err);

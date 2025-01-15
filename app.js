@@ -68,8 +68,6 @@ app.use((req, res, next) => {
 // Route for the homepage
 app.get("/", (req, res) => {
   res.cookie("name", "Ardy", { signed: true });
-  console.log(req.signedCookies);
-
   if (req.session.count) {
     req.session.count += 1;
   } else {
