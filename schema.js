@@ -1,6 +1,11 @@
 // models/campgroundSchema.js
 const Joi = require("joi");
 
+const imageSchema = Joi.object({
+  url: Joi.string().uri().required(), // Validate that url is a valid URI string
+  filename: Joi.string().required(), // Validate that filename is a string
+});
+
 const campgroundSchema = Joi.object({
   campground: Joi.object({
     title: Joi.string().min(3).required().messages({
@@ -24,11 +29,7 @@ const campgroundSchema = Joi.object({
     location: Joi.string().required().messages({
       "string.empty": "Location is required",
     }),
-
-    image: Joi.string().uri().required().messages({
-      "string.empty": "Image URL is required",
-      "string.uri": "Image URL must be a valid URL",
-    }),
+    // images: Joi.array().items(imageSchema).min(1).required(),
   }).required(),
 });
 

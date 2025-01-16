@@ -1,3 +1,4 @@
+require("dotenv").config()
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -7,7 +8,7 @@ const morgan = require("morgan");
 const ejsMate = require("ejs-mate");
 const AppError = require("./utils/AppError");
 const { globalErrorHandler } = require("./utils/errorHandlers");
-require("dotenv").config();
+
 const campgroundsRouter = require("./routes/campgroundRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
 const authRouter = require("./routes/authRoutes");

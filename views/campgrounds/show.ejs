@@ -1,58 +1,84 @@
 <% layout('layouts/boilerplate') %>
-
+<script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
+<link
+  href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css"
+  rel="stylesheet"
+/>
 <style>
-  /* Mengatur arah bintang dari kanan ke kiri */
   .star-rating {
     direction: rtl;
     gap: 0.5rem;
   }
-
-  /* Sembunyikan radio buttons */
   .star-rating input[type="radio"] {
     display: none;
   }
-
-  /* Style awal untuk bintang (abu-abu) */
   .star-rating label {
     color: #ccc;
     cursor: pointer;
   }
-
-  /* Ubah warna saat di-hover */
   .star-rating label:hover,
   .star-rating label:hover ~ label {
     color: #ffc107;
   }
-
-  /* Ubah warna bintang saat dipilih (klik) */
   .star-rating input[type="radio"]:checked ~ label {
     color: #ffc107;
+  }
+
+  #map {
+    width: 100%;
+    height: 400px; /* Set height for the map */
+    border: 1px solid #ddd;
   }
 </style>
 
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-lg-8">
+     
       <!-- Card for Campground details -->
       <div class="card border-0 shadow-lg">
         <!-- Image Section -->
-        <div class="d-flex justify-content-center">
-          <img
-            src="<%= campground.image %>"
-            class="card-img-top rounded-top"
-            alt="<%= campground.title %>"
-            style="
-              width: 100%;
-              height: 354px;
-              object-fit: cover;
-              border-radius: 0.25rem;
-            "
-          />
+        <div
+          id="carouselExampleAutoplaying"
+          class="carousel slide"
+          data-bs-ride="carousel"
+        >
+          <div class="carousel-inner">
+            <% campground.images.forEach((f, i) => { %>
+            <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+              <img
+                src="<%= f.url %>"
+                class="d-block w-100"
+                alt="<%= f.filename %>"
+                style="max-height: 40vh; object-fit: cover"
+              />
+            </div>
+            <% }) %>
+          </div>
+          <% if(campground.images.length > 1) {%>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#carouselExampleAutoplaying"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#carouselExampleAutoplaying"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+          <%}%>
         </div>
 
         <!-- Card Body Section -->
         <div class="card-body">
-          <!-- Title and Location -->
           <h1 class="card-title text-center fw-bold text-dark">
             <%= campground.title %>
           </h1>
@@ -65,14 +91,11 @@
           <h6 class="text-center text-dark fw-bold mt-3">
             Submitted by : <%= campground.author.username %>
           </h6>
-
-          <!-- Description Section -->
           <hr />
           <p class="card-text mt-4 text-justify">
             <%= campground.description %>
           </p>
           <% if (currentUser && campground.author.equals(currentUser._id)) { %>
-          <!-- Action Buttons -->
           <div class="d-flex justify-content-between mt-5">
             <a
               href="/campgrounds/<%= campground._id %>/edit"
@@ -89,7 +112,7 @@
               </button>
             </form>
           </div>
-          <%}%>
+          <% } %>
         </div>
       </div>
 
@@ -99,7 +122,7 @@
           <i class="bi bi-arrow-left"></i> Back to Campgrounds
         </a>
       </div>
-
+      <div id="map"></div>
       <!-- Reviews Section -->
       <div class="mt-5">
         <h2 class="mb-4">Reviews</h2>
@@ -110,7 +133,6 @@
         <% } else { %> <% campground.reviews.map(review => { %>
         <div class="card mb-3">
           <div class="card-body">
-            <!-- Display rating with stars -->
             <h5 class="card-title">
               <% for (let i = 0; i < review.rating; i++) { %>
               <i class="bi bi-star-fill text-warning"></i>
@@ -121,8 +143,7 @@
             </h5>
             <p class="card-text"><%= review.body %></p>
             <p class="text-muted">— <%= review.author.username %></p>
-            <% if (currentUser && review.author.equals(currentUser._id)) {
-            %>
+            <% if (currentUser && review.author.equals(currentUser._id)) { %>
             <form
               action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
               method="post"
@@ -147,7 +168,6 @@
           class="my-3 form-validation"
           novalidate
         >
-          <!-- Star Rating Section -->
           <div class="mb-3">
             <label class="form-label d-block mb-2">Rating</label>
             <div class="star-rating d-flex">
@@ -163,8 +183,6 @@
               <% } %>
             </div>
           </div>
-
-          <!-- Review Body Section -->
           <div class="mb-3">
             <label for="body" class="form-label">Review</label>
             <textarea
@@ -174,13 +192,38 @@
               required
             ></textarea>
           </div>
-
           <button class="btn btn-primary">Submit</button>
         </form>
-        <%}else {%>
-        <p class="text-muted">Login for create review</p>
-        <%}%>
+        <% } else { %>
+        <p class="text-muted">Login to create a review</p>
+        <% } %>
       </div>
     </div>
   </div>
 </div>
+<script></script>
+<script>
+  // Ensure the MapTiler API key is valid
+  const maptilerApiKey = "fI6ck1QQeW3J6GyAOP1D"; // Replace with your actual API key
+  // Initialize the MapTiler SDK
+  maptilersdk.config.apiKey = maptilerApiKey;
+
+  const campground = <%- campgroundsGeometry %>
+
+  const map = new maptilersdk.Map({
+    container: "map", // container's id or the HTML element to render the map
+    style: "basic-v2",
+    center: campground.geometry.coordinates, // starting position [lng, lat]
+    zoom: 14, // starting zoom
+  });
+
+  // Add a marker for the campground location
+  new maptilersdk.Marker()
+    .setLngLat(campground.geometry.coordinates)
+    .setPopup(
+      new maptilersdk.Popup({ offset: 25 }).setHTML(
+        `<h3>${campground.title}</h3><p>${campground.location}</p>`
+      )
+    )
+    .addTo(map);
+</script>

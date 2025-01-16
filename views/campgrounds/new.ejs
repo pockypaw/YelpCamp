@@ -2,7 +2,13 @@
 
 <h1 class="text-center">New Campground</h1>
 <div class="col-6 offset-3">
-  <form action="/campgrounds" method="post" novalidate class="form-validation">
+  <form
+    action="/campgrounds"
+    method="post"
+    novalidate
+    class="form-validation"
+    enctype="multipart/form-data"
+  >
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
       <input
@@ -12,9 +18,7 @@
         name="campground[title]"
         required
       />
-      <div class="valid-feedback">
-        Looks good!
-      </div>
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">
@@ -26,23 +30,20 @@
         name="campground[location]"
         required
       />
-      <div class="valid-feedback">
-        Looks good!
-      </div>
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">
       <label for="image" class="form-label">Image URL</label>
       <input
-        type="text"
+        type="file"
         class="form-control"
         id="image"
-        name="campground[image]"
+        name="campground[images]"
+        multiple
         required
       />
-      <div class="valid-feedback">
-        Looks good!
-      </div>
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">
@@ -59,9 +60,7 @@
         />
         <span class="input-group-text">.00</span>
       </div>
-      <div class="valid-feedback">
-        Looks good!
-      </div>
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">
@@ -73,9 +72,7 @@
         rows="4"
         required
       ></textarea>
-      <div class="valid-feedback">
-        Looks good!
-      </div>
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">

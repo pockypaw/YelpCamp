@@ -1,4 +1,8 @@
 const Campground = require("../models/campground");
+const { cld } = require("../cloudinary/config");
+
+const maptilerClient = require("@maptiler/client");
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports = {
   index: async (req, res) => {
@@ -11,7 +15,16 @@ module.exports = {
   },
 
   createCampground: async (req, res) => {
+    const geoData = await maptilerClient.geocoding.forward(
+      req.body.campground.location,
+      { limit: 1 }
+    );
     const campground = new Campground(req.body.campground);
+    campground.geometry = geoData.features[0].geometry;
+    campground.images = req.files.map((f) => ({
+      url: f.path,
+      filename: f.filename,
+    }));
     campground.author = req.user._id;
     await campground.save();
     req.flash("success", "Campground berhasil ditambahkan!");
@@ -25,12 +38,15 @@ module.exports = {
         populate: { path: "author" },
       })
       .populate("author");
-
+    const campgroundsGeometry = await Campground.findById(req.params.id).select(
+      "title location geometry -_id"
+    );
+    console.log(campgroundsGeometry);
     if (!campground) {
       req.flash("error", "Campground tidak ditemukan");
       return res.redirect("/campgrounds");
     }
-    res.render("campgrounds/show", { campground });
+    res.render("campgrounds/show", { campground, campgroundsGeometry });
   },
 
   renderEditForm: async (req, res) => {
@@ -50,6 +66,27 @@ module.exports = {
       { ...req.body.campground },
       { new: true }
     );
+    const geoData = await maptilerClient.geocoding.forward(
+      req.body.campground.location,
+      { limit: 1 }
+    );
+    campground.geometry = geoData.features[0].geometry;
+    const imgs = req.files.map((f) => ({ url: f.path, filename: f.filename }));
+
+    if (imgs.length > 0) {
+      campground.images = imgs;
+    }
+
+    if (req.body.deleteImages) {
+      for (let filename of req.body.deleteImages) {
+        await cld.uploader.destroy(filename);
+      }
+      await campground.updateOne({
+        $pull: { images: { filename: { $in: req.body.deleteImages } } },
+      });
+    }
+
+    await campground.save();
     if (!campground) {
       req.flash("error", "Campground tidak ditemukan");
       return res.redirect("/campgrounds");

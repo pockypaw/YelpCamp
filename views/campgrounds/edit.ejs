@@ -2,7 +2,13 @@
 
 <h1 class="text-center">Edit Campground</h1>
 <div class="col-6 offset-3">
-  <form action="/campgrounds/<%=campground._id%>?_method=PUT" method="post" novalidate class="form-validation"">
+  <form
+    action="/campgrounds/<%=campground._id%>?_method=PUT"
+    method="post"
+    novalidate
+    class="form-validation"
+    enctype="multipart/form-data"
+  >
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
       <input
@@ -13,9 +19,7 @@
         value="<%=campground.title%>"
         required
       />
-      <div class="valid-feedback">
-        Looks good!
-      </div>
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">
@@ -27,23 +31,37 @@
         name="campground[location]"
         value="<%=campground.location%>"
         required
-      />  <div class="valid-feedback">
-        Looks good!
-      </div>
+      />
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">
       <label for="image" class="form-label">Image URL</label>
       <input
-        type="text"
+        type="file"
         class="form-control"
         id="image"
-        name="campground[image]"
-        value="<%=campground.image%>"
-        required
-      />  <div class="valid-feedback">
-        Looks good!
+        name="campground[images]"
+        multiple
+      />
+    </div>
+    <div class="mb-3">
+      <% campground.images.forEach((img, i) => { %>
+      <img
+        src="<%= img.thumbnail %>"
+        alt="<%= img.filename %>"
+        class="img-thumbnail"
+      />
+      <div class="form-check-inline">
+        <input
+          type="checkbox"
+          id="image-<%= i %>"
+          name="deleteImages[]"
+          value="<%= img.filename %>"
+        />
       </div>
+      <label for="image-<%= i %>">Delete?</label>
+      <% }) %>
     </div>
 
     <div class="mb-3">
@@ -61,9 +79,7 @@
         />
         <span class="input-group-text">.00</span>
       </div>
-      <div class="valid-feedback">
-        Looks good!
-      </div>
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">
@@ -74,10 +90,10 @@
         name="campground[description]"
         rows="4"
         required
-      ><%=campground.description%></textarea>
-      <div class="valid-feedback">
-        Looks good!
-      </div>
+      >
+<%=campground.description%></textarea
+      >
+      <div class="valid-feedback">Looks good!</div>
     </div>
 
     <div class="mb-3">
