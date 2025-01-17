@@ -20,16 +20,45 @@ const localStrategy = require("passport-local");
 const User = require("./models/user");
 const { isLoggedIn } = require("./middleware/middleware");
 
-mongoose.connect("mongodb://localhost:27017/yelp-camp", {
+// mongoose.connect("mongodb://localhost:27017/yelp-camp", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+// // Event listeners untuk koneksi
+// const db = mongoose.connection;
+
+// db.on("error", console.error.bind(console, "Connection error:"));
+// db.once("open", () => {
+//   console.log("MongoDB Atlas connection is open.");
+// });
+
+
+
+const uri = `mongodb+srv://pockydb:${process.env.MONGODB_SECRET}@cluster0.xncr3nw.mongodb.net/yelp-camp?retryWrites=true&w=majority&appName=Cluster0`;
+const clientOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+};
 
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("Database connected");
-});
+const sample = (array) => array[Math.floor(Math.random() * array.length)];
+
+// Fungsi untuk menjalankan koneksi MongoDB
+async function run() {
+  try {
+    await mongoose.connect(uri, clientOptions);
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+    // Lakukan ping ke database
+    await mongoose.connection.db.admin().command({ ping: 1 });
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  } finally {
+    // Menutup koneksi (jangan tutup koneksi di sini jika ingin lanjut seeding)
+    console.log("Run function finished.");
+  }
+}
+
 
 const sessionOptions = {
   secret: "mySecret",
@@ -76,8 +105,7 @@ app.use((req, res, next) => {
 // res.send(`Count: ${req.session.count}`);
 // Route for the homepage
 app.get("/", (req, res) => {
-res.render('landing')
-
+  res.render("landing");
 });
 
 app.get("/fakeuser", isLoggedIn, async (req, res) => {

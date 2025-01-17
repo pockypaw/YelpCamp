@@ -1,55 +1,85 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
-const cities = require("./cities");
-const { places, descriptors } = require("./seedHelpers");
-const Campground = require("../models/campground");
+const Campground = require("../models/campground"); // Pastikan model Campground benar
+const cities = require("./cities"); // File data kota
+const { descriptors, places } = require("./seedHelpers"); // File helper
 
-mongoose.connect("mongodb://localhost:27017/yelp-camp", {
+const uri = `mongodb+srv://pockydb:${process.env.MONGODB_SECRET}@cluster0.xncr3nw.mongodb.net/yelp-camp?retryWrites=true&w=majority&appName=Cluster0`;
+const clientOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("Database connected");
-});
+};
 
 const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
-const seedDB = async () => {
-  await Campground.deleteMany({});
-  for (let i = 0; i < 50; i++) {
-    const random1000 = Math.floor(Math.random() * 1000);
+// Fungsi untuk menjalankan koneksi MongoDB
+async function run() {
+  try {
+    await mongoose.connect(uri, clientOptions);
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    const camp = new Campground({
-      author: "6785c864a0cca8569efe04ed",
-      location: `${cities[random1000].city}, ${cities[random1000].state}`,
-      title: `${sample(descriptors)} ${sample(places)}`,
-      images: [
-        {
-          url: `https://picsum.photos/400?random=${random1000}`,
-          filename: `https://picsum.photos/400?random=${random1000}`,
-        },
-        {
-          url: `https://picsum.photos/400?random=${random1000}`,
-          filename: `https://picsum.photos/400?random=${random1000}`,
-        },
-      ],
-      description:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-      price: random1000,
-      geometry: {
-        type: "Point",
-        coordinates: [
-          cities[random1000].longitude,
-          cities[random1000].latitude,
+    // Lakukan ping ke database
+    await mongoose.connection.db.admin().command({ ping: 1 });
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  } finally {
+    // Menutup koneksi (jangan tutup koneksi di sini jika ingin lanjut seeding)
+    console.log("Run function finished.");
+  }
+}
+
+// Fungsi untuk mengisi database
+const seedDB = async () => {
+  try {
+    await Campground.deleteMany({});
+    console.log("Deleted existing campgrounds.");
+
+    for (let i = 0; i < 50; i++) {
+      const random1000 = Math.floor(Math.random() * 1000);
+
+      const camp = new Campground({
+        author: "6785c864a0cca8569efe04ed", // ID pengguna pengarang
+        location: `${cities[random1000].city}, ${cities[random1000].state}`,
+        title: `${sample(descriptors)} ${sample(places)}`,
+        images: [
+          {
+            url: `https://picsum.photos/400?random=${random1000}`,
+            filename: `random-${random1000}`,
+          },
+          {
+            url: `https://picsum.photos/400?random=${random1000}`,
+            filename: `random-${random1000}`,
+          },
         ],
-      },
-    });
-    await camp.save();
+        description:
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        price: Math.floor(Math.random() * 100) + 10, // Harga acak antara 10-100
+        geometry: {
+          type: "Point",
+          coordinates: [
+            cities[random1000].longitude,
+            cities[random1000].latitude,
+          ],
+        },
+      });
+
+      await camp.save();
+      console.log(`Saved campground: ${camp.title}`);
+    }
+
+    console.log("Database seeding completed!");
+  } catch (err) {
+    console.error("Error during database seeding:", err);
+  } finally {
+    mongoose.connection.close(); // Tutup koneksi setelah selesai
+    console.log("Database connection closed.");
   }
 };
 
-seedDB().then(() => {
-  mongoose.connection.close();
-});
+// Jalankan fungsi
+run()
+  .then(() => seedDB())
+  .catch((err) => {
+    console.error("Unexpected error:", err);
+    mongoose.connection.close();
+  });
