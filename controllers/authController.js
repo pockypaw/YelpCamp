@@ -13,7 +13,7 @@ module.exports.registerUser = async (req, res, next) => {
     req.login(registeredUser, (err) => {
       if (err) return next(err);
       req.flash("success", "Welcome back!");
-      res.redirect("/");
+      res.redirect("/campgrounds");
     });
   } catch (e) {
     req.flash("error", e.message);
@@ -27,7 +27,7 @@ module.exports.renderLogin = (req, res) => {
 
 module.exports.loginUser = (req, res) => {
   req.flash("success", "Welcome back!");
-  const redirectUrl = res.locals.returnTo || "/";
+  const redirectUrl = res.locals.returnTo || "/campgrounds";
   delete req.session.returnTo;
   res.redirect(redirectUrl);
 };
