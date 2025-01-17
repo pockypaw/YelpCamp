@@ -67,15 +67,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// res.cookie("name", "Ardy", { signed: true });
+// if (req.session.count) {
+//   req.session.count += 1;
+// } else {
+//   req.session.count = 1;
+// }
+// res.send(`Count: ${req.session.count}`);
 // Route for the homepage
 app.get("/", (req, res) => {
-  res.cookie("name", "Ardy", { signed: true });
-  if (req.session.count) {
-    req.session.count += 1;
-  } else {
-    req.session.count = 1;
-  }
-  res.send(`Count: ${req.session.count}`);
+res.render('landing')
+
 });
 
 app.get("/fakeuser", isLoggedIn, async (req, res) => {
