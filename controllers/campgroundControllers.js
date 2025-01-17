@@ -41,7 +41,6 @@ module.exports = {
     const campgroundsGeometry = await Campground.findById(req.params.id).select(
       "title location geometry -_id"
     );
-    console.log(campgroundsGeometry);
     if (!campground) {
       req.flash("error", "Campground tidak ditemukan");
       return res.redirect("/campgrounds");
