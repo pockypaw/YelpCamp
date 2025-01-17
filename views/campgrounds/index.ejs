@@ -2,9 +2,9 @@
 
 <div id="map" style="width: 100%; height: 350px" class="mb-2"></div>
 
-<!-- Search Form -->
+<!-- Search Form with Sort and Filter -->
 <form action="/campgrounds" method="GET" class="mb-4 mx-auto" style="max-width: 600px;">
-  <div class="input-group">
+  <div class="input-group mb-3">
     <input
       type="text"
       name="search"
@@ -14,7 +14,39 @@
     />
     <div class="input-group-append">
       <button type="submit" class="btn btn-primary">
-        <i class="fas fa-search"></i> <!-- Search Icon -->
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Sort and Filter Buttons -->
+  <div class="d-flex justify-content-between mb-3">
+    <!-- Sort Buttons -->
+    <div class="btn-group" role="group" aria-label="Sort by">
+      <button type="submit" name="sortBy" value="title" class="btn btn-outline-secondary btn-sm <%= sortBy === 'title' ? 'active' : '' %>">
+        <i class="fas fa-sort-alpha-alt"></i> Title
+      </button>
+      <button type="submit" name="sortBy" value="price" class="btn btn-outline-secondary btn-sm <%= sortBy === 'price' ? 'active' : '' %>">
+        <i class="fas fa-dollar-sign"></i> Price
+      </button>
+      <button type="submit" name="sortBy" value="date" class="btn btn-outline-secondary btn-sm <%= sortBy === 'date' ? 'active' : '' %>">
+        <i class="fas fa-calendar-alt"></i> Date
+      </button>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="btn-group" role="group" aria-label="Filter by Location">
+      <button type="submit" name="filter" value="Beach" class="btn btn-outline-info btn-sm <%= filter === 'Beach' ? 'active' : '' %>">
+        Beach
+      </button>
+      <button type="submit" name="filter" value="Mountain" class="btn btn-outline-info btn-sm <%= filter === 'Mountain' ? 'active' : '' %>">
+        Mountain
+      </button>
+      <button type="submit" name="filter" value="Forest" class="btn btn-outline-info btn-sm <%= filter === 'Forest' ? 'active' : '' %>">
+        Forest
+      </button>
+      <button type="submit" name="filter" value="" class="btn btn-outline-info btn-sm <%= !filter ? 'active' : '' %>">
+        All Locations
       </button>
     </div>
   </div>
@@ -34,7 +66,13 @@
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <h5 class="card-title"><%= campground.title %></h5>
+          <h5 class="card-title">
+            <%= campground.title %>
+            <!-- Display Price -->
+            <span class="badge bg-warning text-dark float-right" style="font-size: 1.2rem;">
+              $<%= campground.price %>/night
+            </span>
+          </h5>
           <p class="card-text">
             <small class="text-muted"><%= campground.location %></small>
           </p>
@@ -54,23 +92,17 @@
   <ul class="pagination justify-content-center">
     <% if (currentPage > 1) { %>
       <li class="page-item">
-        <a
-          class="page-link"
-          href="?search=<%= search %>&page=<%= currentPage - 1 %>">Previous</a>
+        <a class="page-link" href="?search=<%= search %>&filter=<%= filter %>&sortBy=<%= sortBy %>&page=<%= currentPage - 1 %>">Previous</a>
       </li>
     <% } %>
     <% for (let i = 1; i <= totalPages; i++) { %>
       <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-        <a
-          class="page-link"
-          href="?search=<%= search %>&page=<%= i %>"><%= i %></a>
+        <a class="page-link" href="?search=<%= search %>&filter=<%= filter %>&sortBy=<%= sortBy %>&page=<%= i %>"><%= i %></a>
       </li>
     <% } %>
     <% if (currentPage < totalPages) { %>
       <li class="page-item">
-        <a
-          class="page-link"
-          href="?search=<%= search %>&page=<%= currentPage + 1 %>">Next</a>
+        <a class="page-link" href="?search=<%= search %>&filter=<%= filter %>&sortBy=<%= sortBy %>&page=<%= currentPage + 1 %>">Next</a>
       </li>
     <% } %>
   </ul>
@@ -81,5 +113,5 @@
 </script>
 <script src="/javascripts/clusterMap.js"></script>
 
-<!-- Add FontAwesome for search icon -->
+<!-- Add FontAwesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />

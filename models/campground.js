@@ -37,7 +37,7 @@ const CampgroundSchema = new Schema(
       minlength: [3, "Title must be at least 3 characters long"],
     },
     price: {
-      type: String,
+      type: Number,
       required: [true, "Price is required"],
       match: [/^\d+(\.\d{1,2})?$/, "Price must be a valid number (e.g. 10.99)"],
     },

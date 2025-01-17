@@ -6,30 +6,46 @@ maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports = {
   index: async (req, res) => {
-    const { search = "", page = 1 } = req.query; // Extract search term and page from query params
-    const limit = 5; // Campgrounds per page
-    const skip = (page - 1) * limit; // Calculate skip value
-  
-    // Filter campgrounds based on search term
-    const query = search
-      ? { title: { $regex: search, $options: "i" } } // Case-insensitive search on title
-      : {};
-  
-    const totalCampgrounds = await Campground.countDocuments(query); // Total matching campgrounds
-    const totalPages = Math.ceil(totalCampgrounds / limit); // Total pages
-  
+    const { search = "", page = 1, sortBy = "title", filter = "" } = req.query;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    // Build the query object based on search and filter criteria
+    const query = {
+      ...(search && { title: { $regex: search, $options: "i" } }), // Case-insensitive search by title
+      ...(filter && { location: { $regex: filter, $options: "i" } }), // Filter by location
+    };
+
+    // Get the total number of campgrounds based on the query
+    const totalCampgrounds = await Campground.countDocuments(query);
+    const totalPages = Math.ceil(totalCampgrounds / limit); // Calculate total pages
+
+    // Define sorting criteria based on the 'sortBy' parameter
+    let sortCriteria = {};
+    if (sortBy === "title") {
+      sortCriteria = { title: 1 }; // Sort by title alphabetically
+    } else if (sortBy === "price") {
+      sortCriteria = { price: 1 }; // Sort by price in ascending order (cheapest first)
+    } else if (sortBy === "date") {
+      sortCriteria = { createdAt: -1 }; // Sort by date in descending order (newest first)
+    }
+
+    // Retrieve the campgrounds based on the query, pagination, and sorting criteria
     const campgrounds = await Campground.find(query)
-      .skip(skip)
-      .limit(limit);
-  
+      .skip(skip) // Apply pagination by skipping the appropriate number of documents
+      .limit(limit) // Limit the number of documents per page
+      .sort(sortCriteria); // Apply the sorting
+
+    // Render the campgrounds page with the necessary data
     res.render("campgrounds/index", {
       campgrounds,
       currentPage: parseInt(page),
       totalPages,
-      search, // Pass the search term back to the template
+      search,
+      filter,
+      sortBy,
     });
   },
-  
 
   renderNewForm: (req, res) => {
     res.render("campgrounds/new");
