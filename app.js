@@ -33,8 +33,6 @@ const { isLoggedIn } = require("./middleware/middleware");
 //   console.log("MongoDB Atlas connection is open.");
 // });
 
-
-
 const uri = `mongodb+srv://pockydb:${process.env.MONGODB_SECRET}@cluster0.xncr3nw.mongodb.net/yelp-camp?retryWrites=true&w=majority&appName=Cluster0`;
 const clientOptions = {
   useNewUrlParser: true,
@@ -47,7 +45,9 @@ const sample = (array) => array[Math.floor(Math.random() * array.length)];
 async function run() {
   try {
     await mongoose.connect(uri, clientOptions);
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
 
     // Lakukan ping ke database
     await mongoose.connection.db.admin().command({ ping: 1 });
@@ -59,6 +59,7 @@ async function run() {
   }
 }
 
+run();
 
 const sessionOptions = {
   secret: "mySecret",
