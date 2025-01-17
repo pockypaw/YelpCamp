@@ -16,7 +16,9 @@ const sample = (array) => array[Math.floor(Math.random() * array.length)];
 async function run() {
   try {
     await mongoose.connect(uri, clientOptions);
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
 
     // Lakukan ping ke database
     await mongoose.connection.db.admin().command({ ping: 1 });
@@ -28,6 +30,8 @@ async function run() {
   }
 }
 
+run();
+
 // Fungsi untuk mengisi database
 const seedDB = async () => {
   try {
@@ -38,7 +42,7 @@ const seedDB = async () => {
       const random1000 = Math.floor(Math.random() * 1000);
 
       const camp = new Campground({
-        author: "6785c864a0cca8569efe04ed", // ID pengguna pengarang
+        author: "678a2c3c9bb9bc3aef987094", // ID pengguna pengarang
         location: `${cities[random1000].city}, ${cities[random1000].state}`,
         title: `${sample(descriptors)} ${sample(places)}`,
         images: [
