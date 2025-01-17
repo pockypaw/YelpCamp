@@ -1,45 +1,48 @@
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-    position: relative;
-    min-height: 100%;
-  }
-  body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
-  }
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
 
-  
-  .container .text-muted {
-    margin: 20px 0;
-  }
-  
-  /* Thumbnail styles */
-  .thumbnail img {
-      width: 100%;
-  }
-  
-  .thumbnail {
-      padding: 0;
-  }
-  
-  .thumbnail .caption-full {
-      padding: 9px;
-  }
-  
-  /* Google Map styles */
-  #map {
-      height: 400px;
-      width: 100%;
-  }
-  
-  /* Campground show page delete button */
-  .delete-form {
-      display: inline-block;
-  }
-  
-  /* Flexbox grid fix */
-  .flex-wrap {
-    display:flex;
-    flex-wrap: wrap;
-  }
+.container .text-muted {
+  margin: 20px 0;
+}
+
+/* Thumbnail styles */
+.thumbnail img {
+  width: 100%;
+}
+
+.thumbnail {
+  padding: 0;
+}
+
+.thumbnail .caption-full {
+  padding: 9px;
+}
+
+/* Google Map styles */
+#map {
+  height: 400px;
+  width: 100%;
+}
+
+/* Campground show page delete button */
+.delete-form {
+  display: inline-block;
+}
+
+/* Flexbox grid fix */
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+ul {
+  padding-left: 0rem;
+}

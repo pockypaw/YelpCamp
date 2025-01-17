@@ -1,35 +1,105 @@
 <% layout('layouts/boilerplate')%>
-<form action="/register" method="post" novalidate class="form-validation">
-  <div class="mb-3">
-    <label for="username" class="form-label">Username</label>
-    <input
-      type="text"
-      class="form-control"
-      id="username"
-      name="username"
-      required
-    />
-    <div class="valid-feedback">Looks good!</div>
-  </div>
 
-  <div class="mb-3">
-    <label for="email" class="form-label">E-mail</label>
-    <input type="email" class="form-control" id="email" name="email" required />
-    <div class="valid-feedback">Looks good!</div>
-  </div>
+<!-- Campground themed Registration Form -->
+<div class="register-container">
+  <form action="/register" method="post" novalidate class="form-validation">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input
+        type="text"
+        class="form-control"
+        id="username"
+        name="username"
+        required
+        placeholder="Enter your username"
+      />
+      <div class="valid-feedback">Looks good!</div>
+    </div>
 
-  <div class="mb-3">
-    <label for="password" class="form-label">Password</label>
-    <input
-      type="password"
-      class="form-control"
-      id="password"
-      name="password"
-      required
-    />
-    <div class="valid-feedback">Looks good!</div>
-  </div>
-  <div class="mb-3">
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </div>
-</form>
+    <div class="mb-3">
+      <label for="email" class="form-label">E-mail</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        required
+        placeholder="Enter your email"
+      />
+      <div class="valid-feedback">Looks good!</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        name="password"
+        required
+        placeholder="Create your password"
+      />
+      <div class="valid-feedback">Looks good!</div>
+    </div>
+
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary">Register</button>
+    </div>
+  </form>
+</div>
+
+<!-- Custom Styling for the Register Page -->
+<style>
+  .register-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .form-validation {
+    background: rgba(255, 255, 255, 0.8); /* Lightly transparent background for the form */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .form-validation .form-label {
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  .form-control {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background-color: #5a9231; /* Campground-inspired color */
+    border: none;
+    padding: 10px 20px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 1.1rem;
+  }
+
+  .btn-primary:hover {
+    background-color: #4a7d28;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .register-container {
+      padding: 10px;
+    }
+
+    .form-validation {
+      padding: 20px;
+      max-width: 90%;
+    }
+  }
+</style>

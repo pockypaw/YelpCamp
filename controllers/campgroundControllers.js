@@ -6,9 +6,30 @@ maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports = {
   index: async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render("campgrounds/index", { campgrounds });
+    const { search = "", page = 1 } = req.query; // Extract search term and page from query params
+    const limit = 5; // Campgrounds per page
+    const skip = (page - 1) * limit; // Calculate skip value
+  
+    // Filter campgrounds based on search term
+    const query = search
+      ? { title: { $regex: search, $options: "i" } } // Case-insensitive search on title
+      : {};
+  
+    const totalCampgrounds = await Campground.countDocuments(query); // Total matching campgrounds
+    const totalPages = Math.ceil(totalCampgrounds / limit); // Total pages
+  
+    const campgrounds = await Campground.find(query)
+      .skip(skip)
+      .limit(limit);
+  
+    res.render("campgrounds/index", {
+      campgrounds,
+      currentPage: parseInt(page),
+      totalPages,
+      search, // Pass the search term back to the template
+    });
   },
+  
 
   renderNewForm: (req, res) => {
     res.render("campgrounds/new");

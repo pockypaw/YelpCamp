@@ -1,12 +1,31 @@
-<% layout('layouts/boilerplate')%>
+<% layout('layouts/boilerplate') %>
 
 <div id="map" style="width: 100%; height: 350px" class="mb-2"></div>
+
+<!-- Search Form -->
+<form action="/campgrounds" method="GET" class="mb-4 mx-auto" style="max-width: 600px;">
+  <div class="input-group">
+    <input
+      type="text"
+      name="search"
+      class="form-control"
+      placeholder="Search campgrounds..."
+      value="<%= search %>"
+    />
+    <div class="input-group-append">
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-search"></i> <!-- Search Icon -->
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- Campgrounds List -->
 <ul>
-  <% for(let campground of campgrounds) { %>
+  <% for (let campground of campgrounds) { %>
   <div class="card mb-3">
     <div class="row">
       <div class="col-md-4">
-        <!-- Check if image URL exists and fall back to a placeholder if not -->
         <img
           src="<%= campground.images.length > 0 ? campground.images[0].url : '/path/to/placeholder.jpg' %>"
           alt="Campground Image"
@@ -16,17 +35,11 @@
       <div class="col-md-8">
         <div class="card-body">
           <h5 class="card-title"><%= campground.title %></h5>
-
           <p class="card-text">
             <small class="text-muted"><%= campground.location %></small>
           </p>
-          <p class="card-text">
-            <%= campground.description %> Lorem ipsum dolor, sit amet
-            consectetur adipisicing elit. Suscipit quia eius numquam qui
-            praesentium commodi sit aperiam quidem. Omnis eligendi porro, ipsam
-            fugiat dolorem quam provident cupiditate excepturi aliquid quis.
-          </p>
-          <a href="/campgrounds/<%= campground._id%>" class="btn btn-primary">
+          <p class="card-text"><%= campground.description %></p>
+          <a href="/campgrounds/<%= campground._id %>" class="btn btn-primary">
             Read More
           </a>
         </div>
@@ -35,7 +48,38 @@
   </div>
   <% } %>
 </ul>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?search=<%= search %>&page=<%= currentPage - 1 %>">Previous</a>
+      </li>
+    <% } %>
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+        <a
+          class="page-link"
+          href="?search=<%= search %>&page=<%= i %>"><%= i %></a>
+      </li>
+    <% } %>
+    <% if (currentPage < totalPages) { %>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?search=<%= search %>&page=<%= currentPage + 1 %>">Next</a>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+
 <script>
-  const campground = {features: <%- JSON.stringify(campgrounds) %>}
+  const campground = { features: <%- JSON.stringify(campgrounds) %> };
 </script>
 <script src="/javascripts/clusterMap.js"></script>
+
+<!-- Add FontAwesome for search icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
