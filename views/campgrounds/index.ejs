@@ -34,20 +34,25 @@
       </button>
     </div>
 
-    <!-- Filter Buttons -->
-    <div class="btn-group" role="group" aria-label="Filter by Location">
-      <button type="submit" name="filter" value="Beach" class="btn btn-outline-info btn-sm <%= filter === 'Beach' ? 'active' : '' %>">
-        Beach
+    <!-- Filter Dropdown -->
+    <div class="btn-group">
+      <button type="button" class="btn btn-outline-info dropdown-toggle btn-sm" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-filter"></i> Filter by Location
       </button>
-      <button type="submit" name="filter" value="Mountain" class="btn btn-outline-info btn-sm <%= filter === 'Mountain' ? 'active' : '' %>">
-        Mountain
-      </button>
-      <button type="submit" name="filter" value="Forest" class="btn btn-outline-info btn-sm <%= filter === 'Forest' ? 'active' : '' %>">
-        Forest
-      </button>
-      <button type="submit" name="filter" value="" class="btn btn-outline-info btn-sm <%= !filter ? 'active' : '' %>">
-        All Locations
-      </button>
+      <div class="dropdown-menu" aria-labelledby="filterDropdown">
+        <a class="dropdown-item" href="?search=<%= search %>&filter=Beach&sortBy=<%= sortBy %>">
+          Beach
+        </a>
+        <a class="dropdown-item" href="?search=<%= search %>&filter=Mountain&sortBy=<%= sortBy %>">
+          Mountain
+        </a>
+        <a class="dropdown-item" href="?search=<%= search %>&filter=Forest&sortBy=<%= sortBy %>">
+          Forest
+        </a>
+        <a class="dropdown-item" href="?search=<%= search %>&filter=&sortBy=<%= sortBy %>">
+          All Locations
+        </a>
+      </div>
     </div>
   </div>
 </form>
