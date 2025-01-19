@@ -19,6 +19,7 @@ const passport = require("passport");
 const localStrategy = require("passport-local");
 const User = require("./models/user");
 const { isLoggedIn } = require("./middleware/middleware");
+const mongoSanitize = require('express-mongo-sanitize');
 
 // mongoose.connect("mongodb://localhost:27017/yelp-camp", {
 //   useNewUrlParser: true,
@@ -87,6 +88,7 @@ app.use(express.json()); // Ensure to use this to parse JSON request body
 app.use(methodOverride("_method"));
 app.use(morgan("tiny"));
 app.use(flash());
+app.use(mongoSanitize());
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));

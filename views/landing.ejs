@@ -8,6 +8,14 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/stylesheets/landing.css">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript" async></script>
+		
+		<!-- Add CSS for hiding content initially -->
+		<style>
+			/* Initially hide body content */
+			#landing-header, .slideshow {
+				display: none;
+			}
+		</style>
 	</head>
 	<body>
 
@@ -23,6 +31,15 @@
 			<li></li>
 			<li></li>
 		</ul>
-		
+
+		<!-- Add JS to show content after the design is loaded -->
+		<script>
+			window.onload = function() {
+				// Show the design first
+				document.getElementById('landing-header').style.display = 'block';
+				document.querySelector('.slideshow').style.display = 'block';
+			}
+		</script>
+
 	</body>
 </html>
